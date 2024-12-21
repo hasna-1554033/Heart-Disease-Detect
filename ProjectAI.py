@@ -5,6 +5,9 @@ import pandas as pd
 file_path = 'Dataset Project.csv'
 dataset = pd.read_csv(file_path)
 
+for column in dataset.columns:
+    dataset[column] = pd.to_numeric(dataset[column], errors='coerce').fillna(0)
+
 dataset["Num"] = dataset["Num"].apply(lambda x: 1 if x > 1 else x)
 
 X = dataset.drop(columns=["Num"]).values.tolist()
@@ -102,11 +105,6 @@ def add_background(image_file):
     """
     st.markdown(css, unsafe_allow_html=True)
 
-# def predict_heart_disease(age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slop, ca, thal):
-#     if cp > 1 or thalach < 100 or oldpeak > 2.0 or chol > 250:
-#         return True  # indikasi penyakit jantung
-#     return False  # ga ada indikasi
-
 if "page" not in st.session_state:
     st.session_state.page = 1
 if "has_disease" not in st.session_state:
@@ -199,7 +197,7 @@ elif st.session_state.page == 2:
         data.append(int(ca))
         data.append(int(thal))
 
-        x_data = [data]
+        x_data = [[float(i) for i in data]]
 
         prior = calculate_prior(y_train)
         mean_variance = calculate_mean_variance(X_train, y_train)
